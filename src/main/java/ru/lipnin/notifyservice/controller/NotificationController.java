@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.lipnin.notifyservice.dto.GeneralNotificationDto;
 import ru.lipnin.notifyservice.dto.UserNotificationDto;
+import ru.lipnin.notifyservice.dto.UserSecNotificationDto;
 import ru.lipnin.notifyservice.exception.NotificationException;
 import ru.lipnin.notifyservice.service.NotificationService;
 
@@ -46,5 +47,20 @@ public class NotificationController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @PostMapping("/user_second")
+    public ResponseEntity<Void> notifySecUser(@RequestBody UserSecNotificationDto notification) {
+        if (notification.message() == null || notification.email() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        try {
+            log.info("Notification email: " + notification.email());
+            notificationService.sendSecNotification(notification);
+            return ResponseEntity.ok().build();
+        } catch (NotificationException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
 
 }
